@@ -110,18 +110,18 @@ OrioleDB is currently in the development stage.  Therefore it has the following 
 
  1. `pg_rewind` copies OrioleDB tables completely. Shortly OrioleDB will implement incremental copying of OrioleDB tables using `pg_rewind`.
  2. OrioleDB supports parallel sequential scan, but not other types of scan.
- 3. OrioleDB doesn't support prepared transactions.
+ 3. OrioleDB doesn't support prepared transactions (two-phase commits).
  4. OrioleDB supports just B-tree indexes.  OrioleDB roadmap contains the implementation of analogs of GiST, GIN, and BRIN.
- 5. OrioleDB supports bitmap scan only for int4, int8 and ctid primary keys.
+ 5. OrioleDB supports bitmap scan only for int4, int8 (bigint) and ctid primary keys.
  6. Row-level concurrency in OrioleDB has some [differences](row_concurrency.md).
- 7. OrioleDB doesn't support `CLUSTER` and `VACUUM FULL` commands yet, because we doesn't implement rewrite of the tables for these commands. And also `CLUSTER` doesn't really makes much sense for index-organized tables.
- 8. `REINDEX CONCURRENTLY` now is not supported.
- 9. OrioleDB tables doesn't support `Sample Scans` yet.
+ 7. OrioleDB doesn't support `CLUSTER` and `VACUUM FULL` commands yet, because we did not implement rewrite of the tables for these commands. Also `CLUSTER` doesn't make sense for index-organized tables.
+ 8. `REINDEX CONCURRENTLY` is currently not supported.
+ 9. OrioleDB tables doesn't support `Sample Scans` yet (for sampling analyze data).
 
 Data deletion
 -------------
 
-OrioleDB automatically merges sparse pages.  Therefore, when many rows are deleted, data pages are freed and available for future usage.  Data files aren't currently shrunk in such a situation, but that would be implemented soon.
+OrioleDB automatically merges sparse pages.  Therefore, when many rows are deleted, data pages are freed and available for future usage.  Data files aren't currently shrunk in such a situation, but that will be implemented soon.
 
 Checkpoints, WAL & recovery
 ---------------------------
@@ -136,6 +136,7 @@ Experimental support of the block devices
 -----------------------------------------
 
 OrioleDB implements experimental support of direct interaction with block devices mode.  This mode removes the overhead of the filesystem.
+[It should be made clear that this is turned off by default.  Also, the commands to enable it that follow could be more script like]
 
 In this mode, the main part of table data is stored in the filesystem, but small metadata is still stored in the data directory.
 
@@ -161,4 +162,4 @@ Settings
  * `orioledb.device_length` -- the length of the block device.  The default is `1 GB`.
  * `orioledb.use_mmap` -- specify whether use `mmap` to work with the block device.  It could be `on` and `off`.  We recommend setting `on` value for NVRAM.  The default is `off`.
 
-All the GUC parameters above require the postmaster restart.
+All of the GUC parameters above require restarting postmaster to take effect.
