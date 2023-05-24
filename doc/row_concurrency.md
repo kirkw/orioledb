@@ -60,3 +60,4 @@ COMMIT
 				> COMMIT;
 				COMMIT
 ```
+It may be worth noting that this latter behavior matches Oracle.
